@@ -16,7 +16,10 @@ const {myUserModel} = require('./modules/userModel')
 const app = express();
 app.use(cors());
 
+app.use(express.json())
+
 const PORT = process.env.PORT
+
 // http://localhost:3001/
 app.get('/', testHandler);
 
@@ -37,6 +40,58 @@ function getUserData(req,res){
       res.send(error)
     }else {
       res.send(userData[0].book)
+    }
+  })
+}
+
+// http://localhost:3001/book
+
+app.post('/book', addNewBook)
+
+function addNewBook(req, res) {
+  console.log(req.body)
+  let { addTitle, addDescription, addLink, addStatus, email } = req.body
+
+  myUserModel.find({ email: email }, (error, bookData) => {
+    if (error) {
+      res.send('No Data', error)
+    } else {
+      console.log(bookData);
+      bookData[0].book.push({
+        name: addTitle,
+        description: addDescription,
+        status: addStatus,
+        img: addLink
+      })
+      console.log(bookData[0]);
+      bookData[0].save()
+      res.send(bookData[0].book)
+    }
+  })
+}
+
+
+// http://localhost:3001/deleteBook
+
+app.delete('/deleteBook/:bookId', deleteBook)
+
+function deleteBook(req, res) {
+
+  let index = Number(req.params.bookId);
+  let email = req.query.email;
+
+  myUserModel.find({ email: email }, (error, bookData) => {
+    if (error) {
+      res.send('No Data', error)
+    } else {
+      let newBookData = bookData[0].book.filter((book, idx) => {
+        if (idx !== index) {
+          return book
+        }
+      })
+      bookData[0].book = newBookData
+      bookData[0].save()
+      res.send(bookData[0].book)
     }
   })
 }
