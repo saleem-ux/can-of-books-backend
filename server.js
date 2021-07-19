@@ -44,6 +44,8 @@ function getUserData(req,res){
   })
 }
 
+
+// ==============================================> lab 13
 // http://localhost:3001/book
 
 app.post('/book', addNewBook)
@@ -95,6 +97,36 @@ function deleteBook(req, res) {
     }
   })
 }
+
+// ================================================================ lab 14
+
+// http://localhost:3001/updateBook
+
+app.put('/updateBook/:id', updateBooks)
+
+function updateBooks (req,res){
+// console.log(req.body);
+  let { updateTitle, updateDescription, updateImage, updateStatus, email } = req.body
+  let index = Number(req.params.id);
+myUserModel.findOne({email: email},(error, updatedBook) => {
+  if (error) {
+    res.send ('No Data' , error)
+  }else {
+    // console.log(updatedBook);
+    updatedBook.book.splice(index,1,{
+      name: updateTitle,
+      description: updateDescription,
+      status: updateStatus,
+      img: updateImage
+    })
+    // console.log(updatedBook);
+    updatedBook.save();
+    res.send(updatedBook.book)
+  }
+})
+
+}
+
 
 
 
