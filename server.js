@@ -9,7 +9,7 @@ const cors = require('cors');
 
 
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/user', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(`${process.env.MONGO_URL}`, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const {myUserModel} = require('./modules/userModel')
 
